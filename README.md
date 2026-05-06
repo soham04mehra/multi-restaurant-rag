@@ -7,33 +7,50 @@ Built on a **RAG (Retrieval-Augmented Generation)** pipeline — the AI never gu
 ---
 
 ## 🏗️ Architecture
-Customer Message
-↓
-┌─────────────────────────────────────────────────────┐
-│                    FastAPI Backend                   │
-│                                                     │
-│  1. Intent Detection                                │
-│     └── veg/non-veg, price range, allergens,        │
-│         spice level extracted from query            │
-│                                                     │
-│  2. Query Expansion                                 │
-│     └── "roll" → doner, shawarma, wrap, pita,       │
-│         frankie, kathi, flatbread...                │
-│                                                     │
-│  3. Vector Search (Supabase pgvector)               │
-│     └── filters applied at DB level:               │
-│         is_veg, max_price, min_price, allergens     │
-│                                                     │
-│  4. Spice Re-ranking                                │
-│     └── medium/high spice dishes pushed to top     │
-│         when customer asks for spicy food           │
-│                                                     │
-│  5. LLM Answer Generation (Gemini 2.0 Flash)        │
-│     └── generates natural friendly response        │
-│         from retrieved dishes only                  │
-└─────────────────────────────────────────────────────┘
-↓
-Customer Gets Answer + Dish Cards
+
+```text
+Customer Query
+      │
+      ▼
+┌──────────────────────────────────────────────────────────┐
+│                    FastAPI Backend                      │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  1. Intent & Metadata Extraction                         │
+│     • Detects veg/non-veg preference                     │
+│     • Extracts price range, allergens, spice level       │
+│     • Identifies cuisine preferences                     │
+│                                                          │
+│  2. Query Expansion                                      │
+│     • Expands semantic food terms                        │
+│     • Example:                                           │
+│       "roll" → shawarma, wrap, doner, pita,              │
+│                  frankie, kathi roll                     │
+│                                                          │
+│  3. Vector Retrieval (Supabase pgvector)                 │
+│     • Embedding similarity search                        │
+│     • Metadata filtering applied BEFORE retrieval        │
+│       - is_veg                                           │
+│       - cuisine                                          │
+│       - allergens                                        │
+│       - min_price / max_price                            │
+│       - restaurant_id                                    │
+│                                                          │
+│  4. Re-ranking Layer                                     │
+│     • Boosts highly relevant dishes                      │
+│     • Prioritizes spicy dishes when requested            │
+│     • Improves final retrieval quality                   │
+│                                                          │
+│  5. LLM Response Generation                              │
+│     • Gemini 2.5 Flash generates natural responses       │
+│     • Answers grounded ONLY in retrieved menu items      │
+│     • Prevents hallucinated dishes or pricing            │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+      │
+      ▼
+Natural Language Restaurant Response
+```
 
 ---
 
