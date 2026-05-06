@@ -1,0 +1,13 @@
+supabase
+python-dotenv
+langchain-community
+langchain-google-genai
+langchain-groq
+fastapi
+uvicorn
+pydantic
+fastembed
+ragas
+datasets
+pandas
+numpy

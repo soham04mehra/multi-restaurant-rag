@@ -1,0 +1,189 @@
+[
+  {
+    "restaurant_id": 1,
+    "name": "Crispy Falafel Doner",
+    "description": "Crispy chickpea patty, sumac seasoned vegetable salad with house tahini dressing in whole-wheat pita pocket.",
+    "price": 329.0,
+    "cuisine": "Middle Eastern",
+    "is_veg": true,
+    "spice_level": "low",
+    "allergens": [
+      "dairy",
+      "gluten"
+    ],
+    "ingredients": [
+      "crispy falafel doner",
+      "crispy chickpea patty",
+      "sumac seasoned vegetable salad",
+      "house tahini dressing in whole-wheat pita pocket"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Harissa Falafel Doner",
+    "description": "Crispy chickpea patty, sumac seasoned vegetable salad, house tahini dressing with hot sauce in whole-wheat pita pocket.",
+    "price": 329.0,
+    "cuisine": "Middle Eastern",
+    "is_veg": true,
+    "spice_level": "medium",
+    "allergens": [
+      "dairy",
+      "gluten"
+    ],
+    "ingredients": [
+      "harissa falafel doner",
+      "crispy chickpea patty",
+      "sumac seasoned vegetable salad",
+      "house tahini dressing",
+      "hot sauce in whole-wheat pita pocket"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Paneer Doner",
+    "description": "Grilled marinated cottage cheese, sumac seasoned vegetable salad, house tahini dressing with hot sauce in whole-wheat pita pocket.",
+    "price": 329.0,
+    "cuisine": "Middle Eastern",
+    "is_veg": true,
+    "spice_level": "medium",
+    "allergens": [
+      "dairy",
+      "gluten"
+    ],
+    "ingredients": [
+      "paneer doner",
+      "grilled marinated cottage cheese",
+      "sumac seasoned vegetable salad",
+      "house tahini dressing",
+      "hot sauce in whole-wheat pita pocket"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Chicken Doner",
+    "description": "Fresh off the grill chicken breast, sumac seasoned vegetable salad and house tahini dressing in whole-wheat pita pocket.",
+    "price": 351.0,
+    "cuisine": "Middle Eastern",
+    "is_veg": false,
+    "spice_level": "low",
+    "allergens": [
+      "dairy",
+      "gluten",
+      "meat"
+    ],
+    "ingredients": [
+      "chicken doner",
+      "fresh off the grill chicken breast",
+      "sumac seasoned vegetable salad",
+      "house tahini dressing in whole-wheat pita pocket"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Spicy Chicken Doner",
+    "description": "Fresh off the grill chicken breast, sumac seasoned vegetable salad, house tahini dressing with hot sauce in whole-wheat pita pocket.",
+    "price": 351.0,
+    "cuisine": "Middle Eastern",
+    "is_veg": false,
+    "spice_level": "medium",
+    "allergens": [
+      "dairy",
+      "gluten",
+      "meat"
+    ],
+    "ingredients": [
+      "spicy chicken doner",
+      "fresh off the grill chicken breast",
+      "sumac seasoned vegetable salad",
+      "house tahini dressing",
+      "hot sauce in whole-wheat pita pocket"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Chicken Shawarma",
+    "description": "Juicy chicken, fresh salad, and hummus wrapped in soft khubz bread.",
+    "price": 329.0,
+    "cuisine": "Middle Eastern",
+    "is_veg": false,
+    "spice_level": "low",
+    "allergens": [
+      "dairy",
+      "gluten",
+      "meat"
+    ],
+    "ingredients": [
+      "chicken shawarma",
+      "juicy chicken",
+      "fresh salad",
+      "hummus wrapped in soft khubz bread"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Paneer Shawarma",
+    "description": "Grilled marinated cottage cheese, fresh salad, and hummus wrapped in soft khubz bread.",
+    "price": 329.0,
+    "cuisine": "Middle Eastern",
+    "is_veg": true,
+    "spice_level": "low",
+    "allergens": [
+      "dairy",
+      "gluten"
+    ],
+    "ingredients": [
+      "paneer shawarma",
+      "grilled marinated cottage cheese",
+      "fresh salad",
+      "hummus wrapped in soft khubz bread"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "French Fries",
+    "description": "Classic salted french fries.",
+    "price": 164.0,
+    "cuisine": "Fast Food",
+    "is_veg": true,
+    "spice_level": "low",
+    "allergens": [],
+    "ingredients": [
+      "french fries",
+      "classic salted french fries"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Chicken Popcorn",
+    "description": "Bite-sized fried chicken pieces.",
+    "price": 249.0,
+    "cuisine": "General",
+    "is_veg": false,
+    "spice_level": "low",
+    "allergens": [
+      "meat"
+    ],
+    "ingredients": [
+      "chicken popcorn",
+      "bite-sized fried chicken pieces"
+    ]
+  },
+  {
+    "restaurant_id": 1,
+    "name": "Walnut Brownie",
+    "description": "Gooey chocolate brownie with melted dark chocolate and walnuts.",
+    "price": 142.0,
+    "cuisine": "Dessert",
+    "is_veg": true,
+    "spice_level": "low",
+    "allergens": [
+      "tree_nuts"
+    ],
+    "ingredients": [
+      "walnut brownie",
+      "gooey chocolate brownie",
+      "melted dark chocolate",
+      "walnuts"
+    ]
+  }
+]
