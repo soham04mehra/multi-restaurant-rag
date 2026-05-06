@@ -1,4 +1,4 @@
-🍽️ Restaurant AI Chatbot
+#🍽️ Restaurant AI Chatbot
 An AI-powered restaurant chatbot backend that lets customers explore the menu and get dish recommendations through natural conversation.
 Built on a RAG (Retrieval-Augmented Generation) pipeline — the AI never guesses. It retrieves real dishes from the menu database and generates answers grounded in actual data.
 
