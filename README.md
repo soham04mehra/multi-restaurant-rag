@@ -42,7 +42,7 @@ Customer Query
 │     • Improves final retrieval quality                   │
 │                                                          │
 │  5. LLM Response Generation                              │
-│     • Gemini 2.5 Flash generates natural responses       │
+│     • Gemini 2.0 Flash generates natural responses       │
 │     • Answers grounded ONLY in retrieved menu items      │
 │     • Prevents hallucinated dishes or pricing            │
 │                                                          │
