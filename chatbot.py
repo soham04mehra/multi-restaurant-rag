@@ -229,53 +229,31 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
             }
 
         # Format dishes into readable text block for the LLM
-        # Build menu context directly from content field of each dish
-        
-        menu_context = "\n---\n".join([
-            dish.get('content', '')
-            for dish in dishes
-        ])
+        menu_context = "\n---\n".join([dish.get('content', '') for dish in dishes])
 
         # If content is empty for any reason fall back to basic info
-        # This is a safety net in case old ingestion data is still there
-        if not menu_context.strip():
-            menu_context = "\n---\n".join([
-                f"Dish: {dish.get('name', 'Unknown')}. "
-                f"Price: {dish.get('price', 'N/A')} rupees. "
-                f"{'Vegetarian' if dish.get('is_veg') else 'Non-Vegetarian'}."
-                for dish in dishes
-            ])
+        # --- FINAL ANSWER GENERATION (THE "PRO" WAY) ---
+        # Instead of building messages manually, we use the qa_prompt template.
+        # It automatically handles the System instructions, Chat History, and User Question.
+        
+        final_messages = qa_prompt.format_messages(
+            context=menu_context,
+            chat_history=session_history.messages,
+            input=query
+        )
 
-        # Build the full message list to send to Groq
-        messages = [
-            {
-                "role": "system",
-                "content": qa_system_prompt.replace("{context}", menu_context)
-            }
-        ]
-
-        # Add all previous messages from this session
-        for msg in session_history.messages:
-            if msg.type == "human":
-                messages.append({"role": "user", "content": msg.content})
-            else:
-                messages.append({"role": "assistant", "content": msg.content})
-
-        # Add the current customer message at the end
-        messages.append({"role": "user", "content": query})
-
-        # Send everything to Groq and get the response
-        response = llm.invoke(messages)
-        groq_answer = response.content
+        # Send the clean list of messages to the AI (Gemini)
+        response = llm.invoke(final_messages)
+        ai_answer = response.content
 
         print("Answer generated successfully")
 
-        # Save this turn to session history
+        # Save this turn to session history so the AI remembers it next time
         session_history.add_user_message(query)
-        session_history.add_ai_message(groq_answer)
+        session_history.add_ai_message(ai_answer)
 
         return {
-            "answer": groq_answer,
+            "answer": ai_answer,
             "dishes": dishes,
             "session_id": session_id
         }
