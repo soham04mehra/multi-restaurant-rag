@@ -201,9 +201,9 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
         # Get existing chat history for this session
         session_history = get_session_history(session_id)
 
-        # --- NEW: Contextualize the question ---
+        # ---  Contextualize the question ---
         # If there is history, rewrite the question to be standalone
-        # Example: "How much is it?" -> "How much is the Chicken Doner?"
+        # Example: "How much is it?" -> "How much is the Chicken roll?"
         search_query = query
         if session_history.messages:
             contextualize_messages = contextualize_q_prompt.format_messages(
@@ -238,7 +238,7 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
                 for dish in dishes
             ])
 
-        # --- FINAL ANSWER GENERATION (THE "PRO" WAY) ---
+        # --- FINAL ANSWER GENERATION  ---
         # This automatically handles the System instructions, Chat History, and User Question.
         final_messages = qa_prompt.format_messages(
             context=menu_context,
