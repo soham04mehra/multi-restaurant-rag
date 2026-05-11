@@ -231,11 +231,15 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
         # Format dishes into readable text block for the LLM
         menu_context = "\n---\n".join([dish.get('content', '') for dish in dishes])
 
-        # If content is empty for any reason fall back to basic info
+        # SAFETY NET: If 'content' is missing, build context from name and price
+        if not menu_context.strip():
+            menu_context = "\n---\n".join([
+                f"Dish: {dish.get('name', 'Unknown')}. Price: {dish.get('price', 'N/A')} rupees."
+                for dish in dishes
+            ])
+
         # --- FINAL ANSWER GENERATION (THE "PRO" WAY) ---
-        # Instead of building messages manually, we use the qa_prompt template.
-        # It automatically handles the System instructions, Chat History, and User Question.
-        
+        # This automatically handles the System instructions, Chat History, and User Question.
         final_messages = qa_prompt.format_messages(
             context=menu_context,
             chat_history=session_history.messages,
