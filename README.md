@@ -1,14 +1,21 @@
-# 🍽️ Restaurant AI Chatbot
+🍽️ Restaurant AI Chatbot
 
 An AI-powered restaurant chatbot backend that lets customers explore the menu and get dish recommendations through natural conversation.
 
-Built on a **RAG (Retrieval-Augmented Generation)** pipeline — the AI never guesses. It retrieves real dishes from the menu database and generates answers grounded in actual data.
+Built on a RAG (Retrieval-Augmented Generation) pipeline — the AI never guesses. It retrieves real dishes from the menu database and generates answers grounded in actual data.
 
----
+Designed for:
 
-## 🏗️ Architecture
+* 🏪 Restaurants
+* 🍔 Cloud kitchens
+* 📱 Food ordering apps
+* 🤖 AI-powered customer support
+* 📋 Smart digital menus
 
-```text
+⸻
+
+🏗️ Architecture
+
 Customer Query
       │
       ▼
@@ -20,12 +27,14 @@ Customer Query
 │     • Detects veg/non-veg preference                     │
 │     • Extracts price range, allergens, spice level       │
 │     • Identifies cuisine preferences                     │
+│     • Parses natural language constraints                │
 │                                                          │
 │  2. Query Expansion                                      │
 │     • Expands semantic food terms                        │
 │     • Example:                                           │
-│       "roll" → shawarma, wrap, doner, pita,              │
+│       "roll" → shawarma, wrap, doner, pita,             │
 │                  frankie, kathi roll                     │
+│     • Improves recall during vector search               │
 │                                                          │
 │  3. Vector Retrieval (Supabase pgvector)                 │
 │     • Embedding similarity search                        │
@@ -40,81 +49,116 @@ Customer Query
 │     • Boosts highly relevant dishes                      │
 │     • Prioritizes spicy dishes when requested            │
 │     • Improves final retrieval quality                   │
+│     • Ensures best contextual dishes reach the LLM       │
 │                                                          │
 │  5. LLM Response Generation                              │
 │     • Gemini 2.0 Flash generates natural responses       │
 │     • Answers grounded ONLY in retrieved menu items      │
 │     • Prevents hallucinated dishes or pricing            │
+│     • Supports conversational follow-up questions        │
 │                                                          │
 └──────────────────────────────────────────────────────────┘
       │
       ▼
 Natural Language Restaurant Response
-```
 
----
+⸻
 
-## ⚙️ Tech Stack
+⚙️ Tech Stack
 
-| Layer | Technology | Why |
-|---|---|---|
-| API | FastAPI | Fast, async, auto Swagger docs |
-| LLM | Gemini 2.0 Flash | Strong instruction following, Hinglish support, generous free tier |
-| Embeddings | FastEmbed `BAAI/bge-small-en-v1.5` | Better semantic retrieval than MiniLM, CPU friendly, free |
-| Vector Database | Supabase pgvector | Managed Postgres with vector search built in |
-| Orchestration | LangChain | Chat history, prompt management |
+Layer	Technology	Why
+API	FastAPI	Fast, async, auto Swagger docs
+ASGI Server	Uvicorn	Lightweight production-ready server
+LLM	Gemini 2.0 Flash	Strong instruction following, Hinglish support, generous free tier
+Embeddings	FastEmbed BAAI/bge-small-en-v1.5	Better semantic retrieval than MiniLM, CPU friendly, free
+Vector Database	Supabase pgvector	Managed Postgres with vector search built in
+Orchestration	LangChain	Chat history, prompt management
+Validation	Pydantic	Clean request/response schema validation
+Environment Management	python-dotenv	Secure environment configuration
 
----
+⸻
 
-## ✨ Features
+✨ Features
 
-- 🔍 **Semantic search** — finds dishes by meaning, not keyword matching
-- 🥗 **Veg / Non-veg filtering** — enforced at database level before LLM sees results
-- 💰 **Price filtering** — supports queries like *"under 300 rupees"* or *"above 200"*
-- 🚫 **Allergen safety** — detects allergen mentions and excludes unsafe dishes automatically
-- 🧠 **Conversation memory** — remembers context within a session for follow-up questions
-- 🏪 **Multi-tenant** — one backend serves multiple restaurants with fully isolated menus
-- 🌶️ **Spice-aware** — re-ranks results by spice level when customer asks for spicy food
-- 📖 **Alias system** — maps everyday customer language to menu terminology for better retrieval
-- 🗣️ **Hinglish friendly** — LLM handles mixed Hindi-English queries naturally
-- 🛡️ **Prompt injection safe** — system prompt explicitly blocks instruction hijacking
+* 🔍 Semantic search — finds dishes by meaning, not keyword matching
+* 🥗 Veg / Non-veg filtering — enforced at database level before LLM sees results
+* 💰 Price filtering — supports queries like “under 300 rupees” or “above 200”
+* 🚫 Allergen safety — detects allergen mentions and excludes unsafe dishes automatically
+* 🧠 Conversation memory — remembers context within a session for natural follow-up questions
+* 💬 Follow-up aware conversations — understands references like “something cheaper”, “make it veg”, or “spicier than before”
+* 🚫 Hallucination resistant — responses are grounded only in retrieved menu data
+* 🛡️ Prompt injection protected — ignores malicious attempts to override system instructions
+* 🏪 Multi-tenant — one backend serves multiple restaurants with fully isolated menus
+* 🌶️ Spice-aware — re-ranks results by spice level when customer asks for spicy food
+* 📖 Alias system — maps everyday customer language to menu terminology for better retrieval
+* 🗣️ Hinglish friendly — LLM handles mixed Hindi-English queries naturally
+* 🛡️ Prompt injection safe — system prompt explicitly blocks instruction hijacking
+* ⚡ Low latency retrieval — optimized embedding search with pgvector
+* 📚 Context-aware responses — maintains conversational continuity
+* 🔄 Dynamic menu updates — easily re-ingest menus anytime
+* 🧾 Structured API responses — frontend-friendly JSON output
 
----
+⸻
 
-## 🗂️ Project Structure
-├── api.py          # FastAPI endpoints (/chat, /menu, /health)
-├── chatbot.py      # Core RAG pipeline — search, filter, LLM call
-├── embeddings.py   # Embedding model + dish alias system
-├── ingest.py       # Menu ingestion pipeline
-├── database.py     # Supabase client
-├── config.py       # Environment config
-└── supabase.sql    # Vector search function + table schema
+🗂️ Project Structure
 
----
+├── api.py              # FastAPI endpoints (/chat, /menu, /health)
+├── chatbot.py          # Core RAG pipeline — retrieval + LLM generation
+├── embeddings.py       # Embedding model + alias expansion system
+├── ingest.py           # Menu ingestion pipeline
+├── database.py         # Supabase connection + queries
+├── config.py           # Environment configuration
+├── supabase.sql        # pgvector schema + search function
+├── requirements.txt    # Python dependencies
+├── .env                # API keys (not committed)
+└── README.md           # Project documentation
 
-## 🔄 RAG Pipeline — Step by Step
+⸻
 
-INGEST (runs once per menu update)
-Menu JSON → dish_to_text() → alias expansion → embed → store in Supabase
-QUERY (runs on every customer message)
+🔄 RAG Pipeline — Step by Step
+
+INGESTION FLOW (Runs on Menu Updates)
+
+Menu JSON
+   ↓
+dish_to_text()
+   ↓
+alias expansion
+   ↓
+embedding generation
+   ↓
+store vectors in Supabase
+
+QUERY FLOW (Runs on Every User Message)
+
 Customer query
-→ detect veg intent        (True / False / None)
-→ detect price range       (max_price / min_price / None)
-→ detect allergens         (dairy / gluten / nuts / etc)
-→ expand query with aliases
-→ embed expanded query
-→ vector search in Supabase with all filters at DB level
-→ spice re-rank
-→ pass top dishes to LLM as context
-→ LLM generates answer
-→ return answer + dish list to frontend
+   ↓
+detect veg intent
+   ↓
+detect price range
+   ↓
+detect allergens
+   ↓
+expand query with aliases
+   ↓
+embed expanded query
+   ↓
+vector search in Supabase
+   ↓
+metadata filtering at DB level
+   ↓
+spice-aware reranking
+   ↓
+pass top dishes to Gemini
+   ↓
+LLM generates grounded answer
+   ↓
+return answer + dish metadata
 
+⸻
 
----
+🗄️ Database Schema
 
-## 🗄️ Database Schema
-
-```sql
 table: menu_items
 ├── id            uuid (primary key)
 ├── restaurant_id text
@@ -128,129 +172,252 @@ table: menu_items
 ├── ingredients   text[]
 ├── content       text       ← enriched text used for embedding
 └── embedding     vector(384)
-```
 
----
+⸻
 
-## 🔍 Vector Search Function
+🔍 Vector Search Function
 
 Filters applied inside Supabase before returning results:
-- `restaurant_id` — isolates each restaurant's menu
-- `is_veg` — veg or non-veg only when intent detected
-- `max_price / min_price` — price range filtering
-- `exclude_allergens` — removes dishes with unsafe allergens
-- Ranked by cosine similarity to query embedding
 
----
+* restaurant_id — isolates each restaurant’s menu
+* is_veg — veg or non-veg only when intent detected
+* max_price / min_price — price range filtering
+* exclude_allergens — removes dishes with unsafe allergens
+* Ranked by cosine similarity to query embedding
+* Returns only top relevant dishes to reduce hallucination risk
 
-## 🚀 Getting Started
+⸻
 
-```bash
-# Install dependencies
+🚀 Getting Started
+
+1. Clone Repository
+
+git clone https://github.com/soham04mehra/multi-restaurant-rag.git
+cd multi-restaurant-rag
+
+2. Install Dependencies
+
 pip install -r requirements.txt
 
-# Add your keys to .env
+3. Configure Environment Variables
+
+Create a .env file:
+
 GOOGLE_API_KEY=your_gemini_key
 SUPABASE_URL=your_supabase_url
 SUPABASE_KEY=your_supabase_key
 
-# Run SQL in Supabase SQL Editor to create table and search function
-# (see supabase.sql)
+4. Setup Database
 
-# Ingest your menu
+Run the SQL from supabase.sql in the Supabase SQL Editor.
+
+This creates:
+
+* menu_items table
+* pgvector extension
+* vector similarity search function
+
+5. Ingest Menu Data
+
 python ingest.py
 
-# Start the server
+6. Start FastAPI Server
+
 python api.py
-```
 
----
+7. Open Swagger Docs
 
-## 📡 API Reference
+http://localhost:8000/docs
 
-### `POST /chat`
-```json
+⸻
+
+📡 API Reference
+
+POST /chat
+
 Request:
 {
   "message": "suggest me a spicy veg roll under 300 rupees",
   "restaurant_id": "rest_delhi_01",
   "session_id": "optional-on-first-message"
 }
-
 Response:
 {
   "answer": "Here are some spicy veg options under 300 rupees...",
   "dishes": [...],
   "session_id": "abc-123"
 }
-```
 
-### `GET /menu/{restaurant_id}`
-```json
+⸻
+
+GET /menu/{restaurant_id}
+
 Response:
 {
   "restaurant_id": "rest_delhi_01",
   "total_dishes": 10,
   "menu": [...]
 }
-```
 
-### `GET /health`
-```json
+⸻
+
+GET /health
+
 Response:
 {
   "status": "ok",
   "message": "Restaurant chatbot API is running"
 }
-```
 
----
+⸻
 
-## 🧠 How Session Memory Works
-First message  → frontend sends no session_id
+🧠 Example Queries
+
+suggest me a spicy veg roll under 300
+show me chicken shawarma options
+what are the best cheesy items
+show gluten free dishes
+recommend me something spicy and non veg
+cheap veg wraps near 200 rupees
+
+⸻
+
+🧠 Conversation Memory & Follow-Up Handling
+
+The chatbot supports multi-turn conversations and understands contextual follow-up questions naturally.
+
+Examples:
+
+User: suggest me a spicy veg roll
+AI: recommends spicy veg dishes
+User: something cheaper
+AI: understands the previous context and recommends lower-priced veg rolls
+User: make it more cheesy
+AI: keeps previous dish context and modifies recommendations
+
+The system maintains chat history per session so the LLM can answer contextually instead of treating every message as isolated.
+
+⸻
+
+🧠 How Session Memory Works
+
+First message
+→ frontend sends no session_id
 → server generates one and returns it
-Next messages  → frontend sends session_id back
+Next messages
+→ frontend sends session_id back
 → server loads chat history for that session
-→ LLM sees full conversation context
+→ LLM sees previous conversation context
+→ follow-up questions work naturally
 
----
+⸻
 
-## ⚠️ Important Notes
+📊 RAG Evaluation & Testing
 
-- Never commit your `.env` file — it contains secret keys
-- Re-run `ingest.py` every time menu or aliases are updated
-- Session history is stored in memory — resets on server restart
-- Supabase free tier + Gemini free tier covers early growth comfortably
+The project also includes evaluation pipelines using RAGAS to measure retrieval and answer quality.
 
----
+Evaluation helps test:
 
-# 📦 Requirements
+* Context relevance
+* Faithfulness to retrieved data
+* Answer correctness
+* Retrieval quality
+* Hallucination resistance
 
-## Install Dependencies
+This ensures the chatbot is not only functional, but also measurable and reliable.
 
-Run the following command to install all required packages:
+⸻
 
-```bash
+🛡️ Safety & Reliability
+
+* LLM only answers using retrieved menu context
+* Chat history is preserved for contextual follow-up conversations
+* Follow-up questions reuse previous conversational state intelligently
+* Prompt injection attempts are blocked by strict system instructions
+* The chatbot ignores attempts to manipulate or override internal behavior
+* Metadata filtering happens before LLM generation
+* Allergens can be excluded automatically
+* Restaurant data is isolated using restaurant_id filtering
+* No hallucinated dishes or fake prices returned
+* Responses remain grounded in actual database records
+
+⸻
+
+⚠️ Important Notes
+
+* Never commit your .env file — it contains secret keys
+* Re-run ingest.py every time menu or aliases are updated
+* Session history is stored in memory — resets on server restart
+* Supabase free tier + Gemini free tier covers early growth comfortably
+* Use production-grade session storage like Redis for deployment
+* Add authentication before deploying publicly
+
+⸻
+
+📦 Requirements
+
+Install Dependencies
+
 pip install fastapi uvicorn supabase langchain langchain-groq langchain-google-genai langchain-community fastembed python-dotenv pydantic
-```
 
-## Core Technologies
+⸻
 
-| Package | Purpose |
-|---|---|
-| fastapi | Backend API framework |
-| uvicorn | ASGI server for FastAPI |
-| supabase | Database and vector storage |
-| langchain | RAG orchestration framework |
-| langchain-groq | Groq LLM integration |
-| langchain-google-genai | Gemini integration |
-| langchain-community | Community LangChain utilities |
-| fastembed | Local embedding generation |
-| python-dotenv | Environment variable management |
-| pydantic | Data validation and schemas |
+Core Technologies
 
-## Recommended Python Version
+Package	Purpose
+fastapi	Backend API framework
+uvicorn	ASGI server for FastAPI
+supabase	Database and vector storage
+langchain	RAG orchestration framework
+langchain-groq	Groq LLM integration
+langchain-google-genai	Gemini integration
+langchain-community	Community LangChain utilities
+fastembed	Local embedding generation
+python-dotenv	Environment variable management
+pydantic	Data validation and schemas
 
-```bash
+⸻
+
+Recommended Python Version
+
 Python 3.10+
-```
+
+⸻
+
+📈 Future Improvements
+
+* Redis-based persistent session memory
+* Hybrid search (BM25 + Vector Search)
+* Admin dashboard for menu management
+* Real-time analytics for popular dishes
+* Voice-enabled ordering assistant
+* WhatsApp / Telegram integration
+* Multi-language support
+* Docker deployment setup
+* Kubernetes deployment support
+* Streaming LLM responses
+
+⸻
+
+🤝 Contributing
+
+# Fork repository
+# Create feature branch
+# Commit changes
+# Open pull request
+
+⸻
+
+📄 License
+
+MIT License
+
+⸻
+
+⭐ Final Notes
+
+This project demonstrates a production-style RAG architecture tailored specifically for restaurant recommendation systems.
+
+Instead of relying on generic chatbot responses, the system retrieves real menu data, applies metadata-aware filtering, and generates grounded conversational answers.
+
+The result is a safer, more accurate, and scalable restaurant AI assistant.
