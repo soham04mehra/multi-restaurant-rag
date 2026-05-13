@@ -3,8 +3,9 @@ import json
 import config
 from embeddings import dish_to_text, load_embedding_model
 from database import insert_dish
+import asyncio
 
-def run_ingestion_pipeline(json_path: str, restaurant_id: str):
+async def run_ingestion_pipeline(json_path: str, restaurant_id: str):
     print("\n--- 🟢 STARTING JSON INGESTION PIPELINE ---")
     
     print(f"Loading JSON file from: {json_path}")
@@ -48,7 +49,7 @@ def run_ingestion_pipeline(json_path: str, restaurant_id: str):
         }
         
         try:
-            insert_dish(row_data)
+            await insert_dish(row_data)
             print(f"✅ Successfully inserted: {dish_name}")
         except Exception as e:
             print(f"❌ Failed to insert '{dish_name}': {e}")
@@ -56,4 +57,4 @@ def run_ingestion_pipeline(json_path: str, restaurant_id: str):
     print("\n--- 🔴 PIPELINE COMPLETE ---")
 
 if __name__ == "__main__":
-    run_ingestion_pipeline("menu_1_updated_trimmed.json", "rest_delhi_01")
+    asyncio.run(run_ingestion_pipeline("menu_1_updated_trimmed.json", "rest_delhi_01"))

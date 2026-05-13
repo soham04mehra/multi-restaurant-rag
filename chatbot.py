@@ -10,6 +10,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 import config
 from embeddings import load_embedding_model
 from database import supabase
+import asyncio
 
 
 # STEP 1: LOAD ENVIRONMENT VARIABLES
@@ -35,9 +36,7 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GOOGLE_API
 # Key is session_id, value is that session's ChatMessageHistory object
 store = {}
 
-# ==========================================
 # STEP 3: ALLERGEN DETECTION
-# ==========================================
 # This dictionary maps allergen category names to all their
 # related ingredients and product names.
 ALLERGEN_MAP = {
@@ -80,7 +79,7 @@ def get_match_count(query: str) -> int:
 # ==========================================
 # STEP 4: SEARCH FUNCTION
 # ==========================================
-def search_menu(query: str, restaurant_id: str) -> list:
+async def search_menu(query: str, restaurant_id: str) -> list:
 
     print(f"Searching menu for: {query}")
 
@@ -126,10 +125,13 @@ def search_menu(query: str, restaurant_id: str) -> list:
     }
 
     # Remove None values so the database defaults can take over correctly
-    clean_params = {k: v for k, v in rpc_params.items() if v is not None}
+    clean_params = {}
+    for k, v in rpc_params.items():
+       if v is not None:
+         clean_params[k] = v
 
-    # Call the updated Supabase function
-    response = supabase.rpc("match_menu_items", clean_params).execute()
+
+    response = await supabase.rpc("match_menu_items", clean_params).execute()
 
     print(f"Found {len(response.data)} dishes after filtering")
     return response.data
@@ -193,7 +195,7 @@ qa_prompt = ChatPromptTemplate.from_messages([
 
 
 # STEP 7: get_answer() FUNCTION
-def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
+async def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
 
     try:
         print(f"Getting answer for: {query}")
@@ -201,7 +203,7 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
         # Get existing chat history for this session
         session_history = get_session_history(session_id)
 
-        # ---  Contextualize the question ---
+        # --- Contextualize the question ---
         # If there is history, rewrite the question to be standalone
         # Example: "How much is it?" -> "How much is the Chicken roll?"
         search_query = query
@@ -211,12 +213,12 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
                 input=query
             )
             # Use LLM to rewrite the query
-            context_response = llm.invoke(contextualize_messages)
+            context_response = await llm.ainvoke(contextualize_messages)
             search_query = context_response.content
             print(f"Contextualized Query: {search_query}")
 
         # Search Supabase using the contextualized query
-        dishes = search_menu(search_query, restaurant_id)
+        dishes = await search_menu(search_query, restaurant_id)
 
         # If no dishes found return polite message immediately
         if not dishes:
@@ -247,7 +249,7 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
         )
 
         # Send the clean list of messages to the AI (Gemini)
-        response = llm.invoke(final_messages)
+        response = await llm.ainvoke(final_messages)
         ai_answer = response.content
 
         print("Answer generated successfully")
@@ -271,9 +273,12 @@ def get_answer(query: str, session_id: str, restaurant_id: str) -> dict:
         }
 
 if __name__ == "__main__":
-    result = get_answer(
-        query="I am allergic to dairy, show me options",
-        session_id="test_session_001",
-        restaurant_id="rest_delhi_01"
-    )
-    print(result["answer"])
+    import asyncio
+    async def test():
+        result = await get_answer(
+            query="I am allergic to dairy, show me options",
+            session_id="test_session_001",
+            restaurant_id="rest_delhi_01"
+        )
+        print(result["answer"])
+    asyncio.run(test())

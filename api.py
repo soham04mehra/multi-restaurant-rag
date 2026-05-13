@@ -56,7 +56,7 @@ class HealthResponse(BaseModel):
 # If this does not return 200 OK Render will restart the server
 
 @app.get("/health", response_model=HealthResponse)
-def health_check():
+async def health_check():
     # Simply return ok status — no logic needed here
     return {
         "status": "ok",
@@ -70,23 +70,16 @@ def health_check():
 # Example: GET /menu/rest_delhi_01
 
 @app.get("/menu/{restaurant_id}")
-def get_menu(restaurant_id: str):
+async def get_menu(restaurant_id: str):
     
     # Wrap in try except so server never crashes on bad requests
     try:
         print(f"Fetching full menu for restaurant: {restaurant_id}")
         
-        # Fetch all dishes for this restaurant from Supabase
-        # We select specific columns only — no embedding vector needed
-        # Embedding is just 384 numbers, useless for frontend display
-        response = supabase.table("menu_items").select(
+        response = await supabase.table("menu_items").select(
             "name, description, price, cuisine, is_veg, "
             "spice_level, allergens, ingredients"
-        ).eq(
-            # eq means equals — only fetch rows where 
-            # restaurant_id matches the one in the URL
-            "restaurant_id", restaurant_id
-        ).execute()
+        ).eq("restaurant_id", restaurant_id).execute()
         
         # If no dishes found for this restaurant_id
         if not response.data:
@@ -128,7 +121,7 @@ def get_menu(restaurant_id: str):
 # - Without session_id the chatbot has no memory between messages
 
 @app.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+async def chat(request: ChatRequest):
     
     # Wrap in try except so server never crashes on bad requests
     try:
@@ -155,9 +148,7 @@ def chat(request: ChatRequest):
                 detail="Message is too long. Please keep it under 500 characters."
             )
         
-        # Call the core chatbot function from chatbot.py
-        # This handles everything: search, allergen filter, LLM call, history
-        result = get_answer(
+        result = await get_answer(
             query=request.message,
             session_id=session_id,
             restaurant_id=request.restaurant_id
