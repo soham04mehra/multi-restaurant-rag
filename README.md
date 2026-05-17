@@ -454,15 +454,12 @@ Python 3.10+
 # 📈 Future Improvements
 
 - Redis-based persistent session memory
-- Hybrid search (BM25 + Vector Search)
 - Admin dashboard for menu management
 - Real-time analytics for popular dishes
 - Voice-enabled ordering assistant
-- WhatsApp / Telegram integration
 - Multi-language support
 - Docker deployment setup
 - Kubernetes deployment support
-- Streaming LLM responses
 
 ---
 
