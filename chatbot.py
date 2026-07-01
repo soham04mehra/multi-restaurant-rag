@@ -29,7 +29,7 @@ if not GOOGLE_API_KEY:
 
 embedding_model = load_embedding_model()
 # Using Gemini 2.0 Flash: fast, high rate limits, great for multi-restaurant RAG
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GOOGLE_API_KEY)
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=GOOGLE_API_KEY)
 
 
 # This dictionary holds chat history for every session
