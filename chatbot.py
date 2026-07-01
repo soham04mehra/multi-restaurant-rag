@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 # pyrefly: ignore [missing-import]
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -28,8 +29,14 @@ if not GOOGLE_API_KEY:
 # STEP 2: INITIALIZE EVERYTHING ONCE
 
 embedding_model = load_embedding_model()
-# Using Gemini 2.0 Flash: fast, high rate limits, great for multi-restaurant RAG
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=GOOGLE_API_KEY)
+# Using Gemini 1.5 Flash: fast, high rate limits, great for multi-restaurant RAG
+primary_llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=GOOGLE_API_KEY)
+
+# Fallback LLM: Llama 3.3 70B via Groq (extremely fast, huge context window, top tier reasoning for SaaS)
+fallback_llm = ChatGroq(model="llama-3.3-70b-versatile", groq_api_key=GROQ_API_KEY)
+
+# Langchain will automatically use Groq if Gemini hits a rate limit or fails
+llm = primary_llm.with_fallbacks([fallback_llm])
 
 
 # This dictionary holds chat history for every session
