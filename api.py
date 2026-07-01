@@ -6,12 +6,23 @@ from uuid import uuid4
 from chatbot import get_answer
 from database import get_supabase
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # STEP 1: Create the FastAPI app instance
 # This is the main application object everything connects to
 app = FastAPI(
     title="Restaurant Chatbot API",
     description="Multi-tenant RAG chatbot backend for restaurants",
     version="1.0.0"
+)
+
+# Enable CORS so the frontend can connect from any domain without being blocked
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # STEP 2: Define the shape of data coming IN and going OUT
