@@ -3,10 +3,12 @@ python-dotenv
 langchain-community
 langchain-google-genai
 langchain-groq
+langchain-core
 fastapi
-uvicorn
+uvicorn[standard]
 pydantic
 fastembed
+httpx
 ragas
 datasets
 pandas
